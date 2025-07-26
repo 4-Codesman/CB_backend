@@ -9,6 +9,11 @@ app.use(express.json());
 
 // Import routes
 const testRoute = require('./Routes/testRoute');
+const userRoutes = require('./Routes/userRoutes');
+const router = require('./Routes/userRoutes');
+
+// Use routes
+app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
 
 module.exports = app;

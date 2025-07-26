@@ -17,7 +17,7 @@ exports.AddUserToMongo = async(req, res) => {
         }
         
         if (await User.exists({ userID: uID })) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(201).json({ message: 'User already exists' });
         }else {
             await newUser.save();
             return res.status(201).json({ message: 'User added successfully' });

@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const stokvelUserSchema = new Schema({
     sv_id: { type: Schema.Types.ObjectId, ref: 'Stokvel', required: true },
     user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    position: { type: Number, required: ture}
+    user_email: { type: String, ref:'User', required: true },
+    position: { type: Number, required: true}
 })
 
 const StokvelUser = mongoose.model('StokvelUser', stokvelUserSchema, 'StokvelUsers');

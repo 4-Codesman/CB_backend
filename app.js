@@ -11,10 +11,12 @@ app.use(express.json());
 const testRoute = require('./Routes/testRoute');
 const userRoutes = require('./Routes/userRoutes');
 const viewRoute = require('./Routes/viewRoute');
+const stokvelRoute = require('./Routes/stokvelRoute');
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
 app.use('/api/view', viewRoute);
+app.use('/api/stokvels', stokvelRoute);
 
 module.exports = app;

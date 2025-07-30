@@ -20,4 +20,24 @@ router.get('/emails', async (req, res) => {
     }
   });
 
+  router.post('/getUserIdsByEmail', async (req, res) =>
+  {
+    try{
+      const { emails } = req.body;
+      if (!Array.isArray(emails) || emails.length ===0)
+        {
+        return res.status(400).json({ error: 'Invalid Array'});
+      }
+      const users = await User.find({ userEmail: { $in: emails } },'userEmail userID');
+
+      const ans = users.map(user => ({ email: user.userEmail, userID: user.userID }));
+
+      res.json(ans);
+    }
+    catch (err) {
+      console.error('Error fetching IDs:', err);
+      res.status(500).json({ error: 'Failed to fetch IDs' });
+    }
+
+  });
 module.exports = router;

@@ -11,10 +11,19 @@ app.use(express.json());
 const testRoute = require('./Routes/testRoute');
 const userRoutes = require('./Routes/userRoutes');
 const transactionRoutes = require('./Routes/transactionRoutes');
+const viewRoute = require('./Routes/viewRoute');
+const friendsRoutes = require('./Routes/friendsRoutes');
+const stokvelRoute = require('./Routes/stokvelRoute');
+const joinRoute= require('./Routes/joinRoute');
+
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
 app.use('/api/transactions', transactionRoutes);                       
+app.use('/api/view', viewRoute);
+app.use('/api/friends', friendsRoutes);
+app.use('/api/stokvels', stokvelRoute);
+
 
 module.exports = app;

@@ -2,11 +2,10 @@ const User = require('../Models/userModel');
 const Transaction = require('../Models/transactionModel');
 
 
-exports.IncomingTransaction =  async (req, res) => {
+exports.IncomingTransaction = async (req, res) => {
+    const { uID, Amount, tag } = req.body;
 
-    const {uID, Amount, tag } = req.body;
-
-    if (User.exists({ userID: uID })) {
+    if (await User.exists({ userID: uID })) {
         try {
             const user = await User.findOne({ userID: uID }); // Correctly fetch the user
 
@@ -14,13 +13,19 @@ exports.IncomingTransaction =  async (req, res) => {
                 return res.status(400).json({ message: 'User does not exist' });
             }
 
+            // Ensure Amount is treated as a number
+            const numericAmount = Number(Amount);
+            if (isNaN(numericAmount)) {
+                return res.status(400).json({ message: 'Invalid Amount value' });
+            }
+
             // Update user balances
             if (tag === 'SavingsLeague') {
-                user.SavingsLeague_Balance += Amount;
-                user.accBalance += Amount;
+                user.SavingsLeague_Balance += numericAmount;
+                user.accBalance += numericAmount;
                 
             }else if (tag === 'Account') {
-                user.accBalance += Amount;
+                user.accBalance += numericAmount;
             }
 
             // Save the updated user document
@@ -28,7 +33,7 @@ exports.IncomingTransaction =  async (req, res) => {
 
             const trans = new Transaction({
                 userID: uID,
-                Amount: Amount,
+                Amount: numericAmount,
                 tag: tag,
                 date: new Date()
             });
@@ -38,10 +43,10 @@ exports.IncomingTransaction =  async (req, res) => {
             } else {
                 // Rollback changes if transaction fails
                 if (tag === 'SavingsLeague') {
-                    user.SavingsLeague_Balance -= Amount;
-                    user.accBalance -= Amount;
+                    user.SavingsLeague_Balance -= numericAmount;
+                    user.accBalance -= numericAmount;
                 } else if (tag === 'Account') {
-                    user.accBalance -= Amount;
+                    user.accBalance -= numericAmount;
                 }
                 await user.save(); // Save rollback changes
                 return res.status(500).json({ message: 'Transaction failed' });
@@ -50,7 +55,7 @@ exports.IncomingTransaction =  async (req, res) => {
             // add point recalculation logic here.
 
         } catch (error) {
-            console.error('Mongo querry error:', error);
+            console.error('Mongo query error:', error);
             return res.status(500).json({ message: 'Internal server error' });
         }
     }else{

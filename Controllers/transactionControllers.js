@@ -64,9 +64,9 @@ exports.IncomingTransaction = async (req, res) => {
 }
 
 exports.GetUserTransactions = async (req, res) => {
-    const { uID } = req.body;
+    const { uID } = req.params; // Extract uID from URL parameters
 
-    if ( await User.exists({ userID: uID })) {
+    if (await User.exists({ userID: uID })) {
         try {
             const transactions = await Transaction.find({ userID: uID }).sort({ date: -1 });
 
@@ -82,4 +82,4 @@ exports.GetUserTransactions = async (req, res) => {
     } else {
         return res.status(400).json({ message: 'User does not exist' });
     }
-}
+};

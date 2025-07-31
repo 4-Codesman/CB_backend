@@ -4,5 +4,5 @@ const Stokvel= require('../Controllers/CStokvelController');
 
 router.post('/create', Stokvel.createStokvel);
 
-    module.exports = router;
+module.exports = router;
 

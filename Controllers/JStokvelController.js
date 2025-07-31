@@ -1,4 +1,5 @@
 const User = require('../Models/StokvelUserModel');
+const Stokvel = require('../Models/stokvelModel');
 
 exports.checkRequestsByEmail= async (req, res) => {
     try {
@@ -26,3 +27,41 @@ exports.checkRequestsByEmail= async (req, res) => {
       res.status(500).json({ error: 'Server error' });
     }
   };
+
+  exports.InviteResponse = async (req, res) => {
+    try {
+      const {stokvelId, email, accepted}=req.body;
+  
+      if (!email || !stokvelId ||typeof accepted !== 'boolean') {
+        return res.status(400).json({error: 'Missing data'});
+      }
+  
+      const user=await User.findOneAndUpdate(
+        { user_email: email, sv_id: stokvelId },
+        { status: accepted? 1 : 2 },
+        { new: true }
+      );
+  
+      if (!user) 
+      {
+        return res.status(404).json({ error: 'User AFK'});
+      }
+  
+      res.json({ message: 'Response recorded successfully' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
+
+  exports.getStokvelDetails = async (req, res) => {
+
+    const { stokvelId } = req.params;  // get ID from URL
+  try {
+    const stokvel = await Stokvel.findById(stokvelId);
+    if (!stokvel) return res.status(404).json({ error: 'No such Stokvel'});
+    res.json(stokvel);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};

@@ -12,7 +12,7 @@ exports.IncomingTransaction =  async (req, res) => {
             
             if (tag === 'SavingsLeague') {
                 user.SavingsLeague_Balance += Amount;
-                user.Total_Balance += Amount;
+                user.accBalance += Amount;
             }else if (tag === 'Account') {
                 user.Total_Balance += Amount;
             }
@@ -29,9 +29,9 @@ exports.IncomingTransaction =  async (req, res) => {
             }else{
                 if (tag === 'SavingsLeague') {
                     user.SavingsLeague_Balance -= Amount;
-                    user.Total_Balance -= Amount;
+                    user.accBalance -= Amount;
                 }else if (tag === 'Account') {
-                    user.Total_Balance -= Amount;
+                    user.accBalance -= Amount;
                 }
                 return res.status(500).json({ message: 'Transaction failed'});
             }

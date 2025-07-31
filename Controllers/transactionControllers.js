@@ -8,14 +8,23 @@ exports.IncomingTransaction =  async (req, res) => {
 
     if (User.exists({ userID: uID })) {
         try {
-            const user = await User.find;
-            
+            const user = await User.findOne({ userID: uID }); // Correctly fetch the user
+
+            if (!user) {
+                return res.status(400).json({ message: 'User does not exist' });
+            }
+
+            // Update user balances
             if (tag === 'SavingsLeague') {
                 user.SavingsLeague_Balance += Amount;
                 user.accBalance += Amount;
+                
             }else if (tag === 'Account') {
                 user.accBalance += Amount;
             }
+
+            // Save the updated user document
+            await user.save();
 
             const trans = new Transaction({
                 userID: uID,
@@ -24,16 +33,18 @@ exports.IncomingTransaction =  async (req, res) => {
                 date: new Date()
             });
 
-            if (await trans.save()){
-                return res.status(200).json({ message: 'Transaction sucessful'});
-            }else{
+            if (await trans.save()) {
+                return res.status(200).json({ message: 'Transaction successful' });
+            } else {
+                // Rollback changes if transaction fails
                 if (tag === 'SavingsLeague') {
                     user.SavingsLeague_Balance -= Amount;
                     user.accBalance -= Amount;
-                }else if (tag === 'Account') {
+                } else if (tag === 'Account') {
                     user.accBalance -= Amount;
                 }
-                return res.status(500).json({ message: 'Transaction failed'});
+                await user.save(); // Save rollback changes
+                return res.status(500).json({ message: 'Transaction failed' });
             }
 
             // add point recalculation logic here.

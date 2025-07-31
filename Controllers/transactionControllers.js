@@ -46,3 +46,24 @@ exports.IncomingTransaction =  async (req, res) => {
         return res.status(400).json({ message: 'User does not exist'});
     }
 }
+
+exports.GetUserTransactions = async (req, res) => {
+    const { uID } = req.body;
+
+    if (User.exists({ userID: uID })) {
+        try {
+            const transactions = await Transaction.find({ userID: uID }).sort({ date: -1 });
+
+            if (transactions.length > 0) {
+                return res.status(200).json(transactions);
+            } else {
+                return res.status(200).json({ message: 'No transactions found for this user' });
+            }
+        } catch (error) {
+            console.error('Error fetching transactions:', error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    } else {
+        return res.status(400).json({ message: 'User does not exist' });
+    }
+}

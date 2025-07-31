@@ -15,5 +15,6 @@ const router = require('./Routes/userRoutes');
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
+app.use('/api/transactions', router);                       
 
 module.exports = app;

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
 
-    userID: {type: schema.Types.ObjectID, ref: 'User', required: true},
+    userID: {type: String, ref: 'User', required: true},
     Amount: {type: Number, required: true},
     tag: {type: String, required: true}, // 'SavingsLeague' or 'Account'
     date: {

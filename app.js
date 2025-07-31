@@ -10,11 +10,11 @@ app.use(express.json());
 // Import routes
 const testRoute = require('./Routes/testRoute');
 const userRoutes = require('./Routes/userRoutes');
-const router = require('./Routes/userRoutes');
+const transactionRoutes = require('./Routes/transactionRoutes');
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
-app.use('/api/transactions', router);                       
+app.use('/api/transactions', transactionRoutes);                       
 
 module.exports = app;

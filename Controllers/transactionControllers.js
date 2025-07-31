@@ -50,7 +50,7 @@ exports.IncomingTransaction =  async (req, res) => {
 exports.GetUserTransactions = async (req, res) => {
     const { uID } = req.body;
 
-    if (User.exists({ userID: uID })) {
+    if ( await User.exists({ userID: uID })) {
         try {
             const transactions = await Transaction.find({ userID: uID }).sort({ date: -1 });
 

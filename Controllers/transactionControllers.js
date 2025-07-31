@@ -14,7 +14,7 @@ exports.IncomingTransaction =  async (req, res) => {
                 user.SavingsLeague_Balance += Amount;
                 user.accBalance += Amount;
             }else if (tag === 'Account') {
-                user.Total_Balance += Amount;
+                user.accBalance += Amount;
             }
 
             const trans = new Transaction({

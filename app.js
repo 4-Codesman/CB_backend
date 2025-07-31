@@ -20,7 +20,7 @@ const joinRoute= require('./Routes/joinRoute');
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
-app.use('/api/transactions', transactionRoutes);                       
+app.use('/api/transactions/:uID', transactionRoutes);                       
 app.use('/api/view', viewRoute);
 app.use('/api/friends', friendsRoutes);
 app.use('/api/stokvels', stokvelRoute);

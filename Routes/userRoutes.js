@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const User = require('../Models/userModel.js');
 
-const {
-    AddUserToMongo
-} = require('../Controllers/userController.js');
+const {AddUserToMongo} = require('../Controllers/userController.js');
+const userController = require('../Controllers/userController.js');
 
 router.post('/login', AddUserToMongo);
+router.patch('/update-progress/:userID', userController.updatePersonalGoalProgress);
+
 
 router.get('/emails', async (req, res) => {
     try {

@@ -11,6 +11,7 @@ app.use(express.json());
 const testRoute = require('./Routes/testRoute');
 const userRoutes = require('./Routes/userRoutes');
 const viewRoute = require('./Routes/viewRoute');
+const friendsRoutes = require('./Routes/friendsRoutes');
 const stokvelRoute = require('./Routes/stokvelRoute');
 const joinRoute= require('./Routes/joinRoute');
 
@@ -18,6 +19,7 @@ const joinRoute= require('./Routes/joinRoute');
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
 app.use('/api/view', viewRoute);
+app.use('/api/friends', friendsRoutes);
 app.use('/api/stokvels', stokvelRoute);
 app.use('/api/join', joinRoute);
 

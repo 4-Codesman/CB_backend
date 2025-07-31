@@ -1,6 +1,8 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const app = require('./app');
+const cron = require('node-cron');
+const { generateMonthlyPairs } = require('./Controllers/friendsController');
 
 const port = process.env.PORT || 5000;
 
@@ -18,4 +20,16 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .catch((err) => {
     console.error('Error connecting to MongoDB:', err);
   });
-  //
+  
+// Schedule monthly pair generation to run on the 1st of every month at midnight
+cron.schedule('0 0 1 * *', () => {
+  console.log('🕐 Generating monthly pairs...');
+  generateMonthlyPairs(
+    { body: {} }, // fake request
+    {
+      status: (code) => ({
+        json: (data) => console.log(`Status ${code}`, data)
+      })
+    }
+  );
+});

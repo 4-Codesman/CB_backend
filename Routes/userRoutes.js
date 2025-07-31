@@ -6,6 +6,8 @@ const userController = require('../Controllers/userController.js');
 
 router.post('/login', AddUserToMongo);
 router.patch('/update-progress/:userID', userController.updatePersonalGoalProgress);
+router.get('/:uid', userController.getUserByUID);
+
 
 
 module.exports = router;

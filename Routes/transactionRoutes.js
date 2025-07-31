@@ -7,6 +7,6 @@ const{
 } = require('../Controllers/transactionControllers.js');
 
 router.post('/incoming', IncomingTransaction);
-router.get('/user', GetUserTransactions);
+router.get('/:uID', GetUserTransactions);
 
 module.exports = router;

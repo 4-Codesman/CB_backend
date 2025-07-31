@@ -24,6 +24,7 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/view', viewRoute);
 app.use('/api/friends', friendsRoutes);
 app.use('/api/stokvels', stokvelRoute);
+app.use('/api/join', joinRoute);
 
 
 module.exports = app;

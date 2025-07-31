@@ -11,10 +11,14 @@ app.use(express.json());
 const testRoute = require('./Routes/testRoute');
 const userRoutes = require('./Routes/userRoutes');
 const viewRoute = require('./Routes/viewRoute');
+const friendsRoutes = require('./Routes/friendsRoutes');
+
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
 app.use('/api/view', viewRoute);
+app.use('/api/friends', friendsRoutes);
+
 
 module.exports = app;

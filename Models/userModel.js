@@ -17,7 +17,8 @@ const userSchema = new Schema({
     accBalance: {type: Number,default: 0},
     accPoints: {type: Number, default: 0},
     personalGoal: {type: Number,default: 0},
-    goalCreatedAt: { type: Date}
+    goalCreatedAt: { type: Date},
+    personalGoalProgress: {type: Number,default: 0}
 
 });
 

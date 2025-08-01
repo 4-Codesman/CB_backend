@@ -57,6 +57,8 @@ exports.checkRequestsByEmail= async (req, res) => {
   exports.getStokvelDetails = async (req, res) => {
 
     const { stokvelId } = req.params;  // get ID from URL
+    console.log("Incoming stokvelId:", stokvelId);           // <--- log the ID value
+    console.log("Type of stokvelId:", typeof stokvelId);  
   try {
     const stokvel = await Stokvel.findById(stokvelId);
     if (!stokvel) return res.status(404).json({ error: 'No such Stokvel'});

@@ -13,6 +13,8 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "mongoose": "^8.16.5"
+    "moment": "^2.30.1",
+    "mongoose": "^8.16.5",
+    "node-cron": "^4.2.1"
   }
 }

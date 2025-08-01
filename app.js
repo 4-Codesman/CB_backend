@@ -10,15 +10,21 @@ app.use(express.json());
 // Import routes
 const testRoute = require('./Routes/testRoute');
 const userRoutes = require('./Routes/userRoutes');
+const transactionRoutes = require('./Routes/transactionRoutes');
 const viewRoute = require('./Routes/viewRoute');
+const friendsRoutes = require('./Routes/friendsRoutes');
 const stokvelRoute = require('./Routes/stokvelRoute');
-const savingLeagueRoute = require('./Routes/savingLeagueRoute'); // ✅ added this line
+const joinRoute = require('./Routes/joinRoute'); // 👈 from other branch
+const savingLeagueRoute = require('./Routes/savingLeagueRoute'); // 👈 your branch
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
+app.use('/api/transactions', transactionRoutes);
 app.use('/api/view', viewRoute);
+app.use('/api/friends', friendsRoutes);
 app.use('/api/stokvels', stokvelRoute);
-app.use('/api/saving-leagues', savingLeagueRoute); // ✅ added this line
+app.use('/api/join', joinRoute); // 👈 from other branch
+app.use('/api/saving-leagues', savingLeagueRoute); // 👈 your branch
 
 module.exports = app;

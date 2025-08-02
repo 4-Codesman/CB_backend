@@ -1,5 +1,6 @@
 const Stokvel = require('../Models/StokvelModel');
 const StokvelUser = require('../Models/StokvelUserModel');
+const User = require('../Models/UserModel');
 
 exports.checkUserByEmail = async (req, res) => {
   try {
@@ -75,9 +76,19 @@ exports.getStokvelsForUser= async (req, res) => {
     const members = await StokvelUser.find({ sv_id: stokvelId }).sort({ position: 1 });
     console.log('Members found:', members);
 
+    const emails = members.map(m => m.user_email);
+    const users = await User.find({ email: { $in: emails } }).select('email name');
+    
+    const emailNameMap = {};
+    users.forEach(u => {
+      emailNameMap[u.email] = u.name;
+    });
+    
+
     const detailedMembers = members.map((m) => ({
       email: m.user_email,
-      position: m.position
+      position: m.position,
+      name: emailNameMap[m.user_email] || 'Unknown'
     }));
     console.log('Detailed members:', detailedMembers);
 

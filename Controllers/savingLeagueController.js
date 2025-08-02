@@ -162,12 +162,22 @@ exports.getOpenSavingLeagues = async (req, res) => {
     console.log('📂 Open leagues found:', openLeagues);
 
     const joinableLeagues = [];
-    for (const league of openLeagues) {
-      const count = await SavingLeagueUser.countDocuments({ svl_id: league._id });
-      console.log(`📊 League ${league.name} has ${count}/${league.maxMembers} members`);
 
-      if (count < league.maxMembers) {
-        joinableLeagues.push(league);
+    for (const league of openLeagues) {
+      try {
+        const count = await SavingLeagueUser.countDocuments({ svl_id: league._id });
+        console.log(`📊 League ${league.name} has ${count}/${league.maxMembers} members`);
+
+        // ✅ Defensive type check
+        const max = Number(league.maxMembers);
+        if (!isNaN(max) && count < max) {
+          joinableLeagues.push(league);
+        } else {
+          console.warn(`⚠️ Skipping league ${league.name} due to invalid maxMembers:`, league.maxMembers);
+        }
+
+      } catch (innerErr) {
+        console.error(`❌ Error counting users for league ${league._id}:`, innerErr);
       }
     }
 

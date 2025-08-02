@@ -77,11 +77,11 @@ exports.getStokvelsForUser= async (req, res) => {
     console.log('Members found:', members);
 
     const emails = members.map(m => m.user_email);
-    const users = await User.find({ email: { $in: emails } }).select('email name');
+    const users = await User.find({ userEmail: { $in: emails } }).select('userEmail userName');
     
     const emailNameMap = {};
     users.forEach(u => {
-      emailNameMap[u.email] = u.name;
+      emailNameMap[u.userEmail.toLowerCase()] = u.userName;
     });
     
 

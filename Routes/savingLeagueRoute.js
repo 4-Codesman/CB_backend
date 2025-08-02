@@ -4,5 +4,6 @@ const savingLeagueController = require('../Controllers/savingLeagueController');
 
 // POST /api/saving-leagues/create
 router.post('/create', savingLeagueController.createSavingLeague);
+router.get('/:leagueId', savingLeagueController.getSavingLeagueById);
 
 module.exports = router;

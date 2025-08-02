@@ -37,6 +37,7 @@ exports.createSavingLeague = async (req, res) => {
     res.status(500).json({ error: 'Server error while creating saving league' });
   }
 };
+
 exports.getSavingLeagues = async (req, res) => {
   try {
     const leagues = await SavingLeague.find();
@@ -46,3 +47,19 @@ exports.getSavingLeagues = async (req, res) => {
     res.status(500).json({ error: 'Server error while fetching saving leagues' });
   }
 };
+
+exports.getSavingLeagueById = async (req, res) => {
+  const { leagueId } = req.params;
+
+  try {
+    const league = await SavingLeague.findById(leagueId);
+    if (!league) {
+      return res.status(404).json({ error: 'Saving League not found' });
+    }
+
+    res.status(200).json(league);
+  } catch (error) {
+    console.error('Error fetching saving league by ID:', error);
+    res.status(500).json({ error: 'Server error while fetching saving league' });
+  }   
+}

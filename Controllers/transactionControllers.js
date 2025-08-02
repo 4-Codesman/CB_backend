@@ -23,9 +23,11 @@ exports.IncomingTransaction = async (req, res) => {
             if (tag === 'SavingsLeague') {
                 user.SavingsLeague_Balance += numericAmount;
                 user.accBalance += numericAmount;
+                user.accPoints += 10; 
                 
             }else if (tag === 'Account') {
                 user.accBalance += numericAmount;
+                user.accPoints += 10;
             }
 
             // Save the updated user document
@@ -51,9 +53,6 @@ exports.IncomingTransaction = async (req, res) => {
                 await user.save(); // Save rollback changes
                 return res.status(500).json({ message: 'Transaction failed' });
             }
-
-            // add point recalculation logic here.
-
         } catch (error) {
             console.error('Mongo query error:', error);
             return res.status(500).json({ message: 'Internal server error' });
@@ -85,6 +84,42 @@ exports.StokvelPayment = async (req, res) => {
                 return res.status(400).json({ message: 'Insufficient funds' });
             }else{
                 user.accBalance -= Amount;
+                user.accPoints += 10;
+                await user.save();
+            }
+
+            //add money to stokvel account logic here.
+            return res.status(200).json({ message: 'Transaction successful' });
+        }else {
+            return res.status(500).json({ message: 'Transaction failed' });
+        }
+    }
+}
+
+exports.SavingsLeaguePayment = async (req, res) => {
+    const { uID, Amount, SL_Name } = req.body;
+
+    if (await User.exists({ userID: uID })) {
+        const trans = new Transaction({
+            userID: uID,
+            Amount: Amount,
+            tag: SL_Name + 'Payment'
+        });
+
+        if ( await trans.save()) {
+            const user = await User.findOne({ userID: uID });
+            if (!user) {
+                return res.status(400).json({ message: 'User does not exist' });
+            }
+
+            const availableBalance = user.accBalance - user.SavingsLeague_Balance;
+
+            if( availableBalance < Amount) {
+                return res.status(400).json({ message: 'Insufficient funds' });
+            }else{
+                user.accBalance -= Amount;
+                user.SavingsLeague_Balance += Amount;
+                user.accPoints += 10;
                 await user.save();
             }
 

@@ -7,5 +7,4 @@ const savingLeagueUserSchema = new Schema({
   goal: { type: Number, required: true }
 });
 
-const SavingLeagueUser = mongoose.model('SavingLeagueUser', savingLeagueUserSchema, 'SavingLeagueUsers');
-module.exports = SavingLeagueUser;
+module.exports = mongoose.models.SavingLeagueUser || mongoose.model('SavingLeagueUser', savingLeagueUserSchema, 'SavingLeagueUsers');

@@ -14,5 +14,4 @@ const savingLeagueSchema = new Schema({
 });
 
 
-const SavingLeague = mongoose.model('SavingLeague', savingLeagueSchema, 'SavingLeagues');
-module.exports = SavingLeague;
+module.exports = mongoose.models.SavingLeague || mongoose.model('SavingLeague', savingLeagueSchema, 'SavingLeagues');

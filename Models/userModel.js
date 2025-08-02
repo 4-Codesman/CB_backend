@@ -28,5 +28,5 @@ const userSchema = new Schema({
 
 });
 
-const User = mongoose.model('User', userSchema, 'Users');
-module.exports = User;
+// Change the model definition to prevent recompilation
+module.exports = mongoose.models.User || mongoose.model('User', userSchema, 'Users');

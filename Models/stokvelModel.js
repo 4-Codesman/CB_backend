@@ -11,4 +11,4 @@ const stokvelSchema = new Schema({
     status: { type: Number, required: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Stokvel', stokvelSchema, 'Stokvels');
+module.exports = mongoose.models.Stokvel || mongoose.model('Stokvel', stokvelSchema, 'Stokvels');

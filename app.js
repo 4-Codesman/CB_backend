@@ -14,17 +14,17 @@ const transactionRoutes = require('./Routes/transactionRoutes');
 const viewRoute = require('./Routes/viewRoute');
 const friendsRoutes = require('./Routes/friendsRoutes');
 const stokvelRoute = require('./Routes/stokvelRoute');
-const joinRoute= require('./Routes/joinRoute');
-
+const joinRoute = require('./Routes/joinRoute'); // 👈 from other branch
+const savingLeagueRoute = require('./Routes/savingLeagueRoute'); // 👈 your branch
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/test', testRoute);
-app.use('/api/transactions', transactionRoutes);                       
+app.use('/api/transactions', transactionRoutes);
 app.use('/api/view', viewRoute);
 app.use('/api/friends', friendsRoutes);
 app.use('/api/stokvels', stokvelRoute);
-app.use('/api/join', joinRoute);
-
+app.use('/api/join', joinRoute); // 👈 from other branch
+app.use('/api/saving-leagues', savingLeagueRoute); // 👈 your branch
 
 module.exports = app;

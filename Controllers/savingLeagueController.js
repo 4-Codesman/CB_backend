@@ -159,10 +159,13 @@ exports.joinSavingLeague = async (req, res) => {
 exports.getOpenSavingLeagues = async (req, res) => {
   try {
     const openLeagues = await SavingLeague.find({ status: 'open' });
+    console.log('📂 Open leagues found:', openLeagues);
 
     const joinableLeagues = [];
     for (const league of openLeagues) {
       const count = await SavingLeagueUser.countDocuments({ svl_id: league._id });
+      console.log(`📊 League ${league.name} has ${count}/${league.maxMembers} members`);
+
       if (count < league.maxMembers) {
         joinableLeagues.push(league);
       }
@@ -174,6 +177,7 @@ exports.getOpenSavingLeagues = async (req, res) => {
     res.status(500).json({ error: 'Server error while fetching open leagues' });
   }
 };
+
 
 // ✅ GET all leagues a user has joined
 exports.getUserLeagues = async (req, res) => {

@@ -35,12 +35,23 @@ exports.checkRequestsByEmail= async (req, res) => {
       if (!email || !stokvelId ||typeof accepted !== 'boolean') {
         return res.status(400).json({error: 'Missing data'});
       }
-  
-      const user=await User.findOneAndUpdate(
-        { user_email: email, sv_id: stokvelId },
-        { status: accepted? 1 : 2 },
-        { new: true }
-      );
+
+      let user;
+
+      if(accepted) {
+        user=await User.findOneAndUpdate(
+          { user_email: email, sv_id: stokvelId },
+          { status: 1},
+          { new: true }
+        );
+      }
+      else
+      {
+        user = await User.findOneAndDelete({
+          user_email: email,
+          sv_id: stokvelId
+        });
+      }
   
       if (!user) 
       {

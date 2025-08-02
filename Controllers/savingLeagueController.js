@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const SavingLeague = require('../Models/savingLeagueModel');
+const SavingLeagueUser = require('../Models/savingLeagueUserModel');
 
 exports.createSavingLeague = async (req, res) => {
   try {
@@ -47,19 +48,20 @@ exports.getSavingLeagues = async (req, res) => {
     res.status(500).json({ error: 'Server error while fetching saving leagues' });
   }
 };
-
-exports.getSavingLeagueById = async (req, res) => {
-  const { leagueId } = req.params;
+/*
+exports.getSavingLeagueByUID = async (req, res) => {
+  const { uID } = req.params;
 
   try {
-    const league = await SavingLeague.findById(leagueId);
-    if (!league) {
-      return res.status(404).json({ error: 'Saving League not found' });
-    }
+      const league_user = await SavingLeagueUser.findOne({ creatorUid: uID });
 
-    res.status(200).json(league);
-  } catch (error) {
-    console.error('Error fetching saving league by ID:', error);
-    res.status(500).json({ error: 'Server error while fetching saving league' });
-  }   
-}
+      if (!league_user) {
+          return res.status(404).json({ message: 'Saving League not found for this user' });
+      }
+
+      const league = await SavingLeague.findById(league_user.svl_id);
+      if (!league) {  
+          return res.status(404).json({ message: 'Saving League not found' });
+      }
+  } 
+}*/

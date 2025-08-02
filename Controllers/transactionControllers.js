@@ -63,6 +63,61 @@ exports.IncomingTransaction = async (req, res) => {
     }
 }
 
+exports.StokvelPayment = async (req, res) => {
+    const { uID, Amount, SV_Name } = req.body;
+
+    if (await User.exists({ userID: uID })) {
+        const trans = new Transaction({
+            userID: uID,
+            Amount: Amount,
+            tag: SV_Name + 'Payment'
+        });
+
+        if ( await trans.save()) {
+            const user = await User.findOne({ userID: uID });
+            if (!user) {
+                return res.status(400).json({ message: 'User does not exist' });
+            }
+
+            const availableBalance = user.accBalance - user.SavingsLeague_Balance;
+
+            if( availableBalance < Amount) {
+                return res.status(400).json({ message: 'Insufficient funds' });
+            }else{
+                user.accBalance -= Amount;
+                await user.save();
+            }
+
+            //add money to stokvel account logic here.
+            return res.status(200).json({ message: 'Transaction successful' });
+        }else {
+            return res.status(500).json({ message: 'Transaction failed' });
+        }
+    }
+}
+
+exports.StokvelWithdrawal = async (req, res) => {
+    const { uID, Amount, SV_Name } = req.body;
+
+    if (await User.exists({ userID: uID })) {
+        const trans = new Transaction({
+            userID: uID,
+            Amount: Amount,
+            tag: SV_Name + 'Withdrawal'
+        });
+
+        user = await User.findOne({ userID: uID });
+        
+        if (await trans.save()) {
+            user.accBalance += Amount;
+            await user.save();
+            return res.status(200).json({ message: 'Transaction successful' });
+        }else{
+            return res.status(500).json({ message: 'Transaction failed' });
+        }
+    }
+}
+
 exports.GetUserTransactions = async (req, res) => {
     const { uID } = req.params; // Extract uID from URL parameters
 

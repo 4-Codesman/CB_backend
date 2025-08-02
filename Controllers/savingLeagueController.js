@@ -159,12 +159,25 @@ exports.joinSavingLeague = async (req, res) => {
 exports.getOpenSavingLeagues = async (req, res) => {
   try {
     const openLeagues = await SavingLeague.find({ status: 'open' });
+    console.log('📂 Open leagues found:', openLeagues);
 
     const joinableLeagues = [];
+
     for (const league of openLeagues) {
-      const count = await SavingLeagueUser.countDocuments({ svl_id: league._id });
-      if (count < league.maxMembers) {
-        joinableLeagues.push(league);
+      try {
+        const count = await SavingLeagueUser.countDocuments({ svl_id: league._id });
+        console.log(`📊 League ${league.name} has ${count}/${league.maxMembers} members`);
+
+        // ✅ Defensive type check
+        const max = Number(league.maxMembers);
+        if (!isNaN(max) && count < max) {
+          joinableLeagues.push(league);
+        } else {
+          console.warn(`⚠️ Skipping league ${league.name} due to invalid maxMembers:`, league.maxMembers);
+        }
+
+      } catch (innerErr) {
+        console.error(`❌ Error counting users for league ${league._id}:`, innerErr);
       }
     }
 
@@ -175,15 +188,27 @@ exports.getOpenSavingLeagues = async (req, res) => {
   }
 };
 
+
 // ✅ GET all leagues a user has joined
 exports.getUserLeagues = async (req, res) => {
-  const { uid } = req.params;
+  const { uID } = req.params;
+  console.log('🔍 Searching for user:', uID);
 
   try {
-    const memberships = await SavingLeagueUser.find({ user_id: uid });
-    const leagueIds = memberships.map(m => m.svl_id);
+    // Fetch memberships for the user
+    const memberships = await SavingLeagueUser.find({ user_id: uID });
+    console.log('📋 Found memberships:', memberships);
 
+    if (memberships.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const leagueIds = memberships.map(m => m.svl_id); // No need to convert since it's already ObjectId
+    console.log('🏷️ League IDs:', leagueIds);
+
+    // Fetch leagues using the IDs
     const userLeagues = await SavingLeague.find({ _id: { $in: leagueIds } });
+    console.log('🎯 Found leagues:', userLeagues);
 
     res.status(200).json(userLeagues);
   } catch (error) {

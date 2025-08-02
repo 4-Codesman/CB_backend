@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 const SavingLeague = require('../Models/savingLeagueModel');
 const SavingLeagueUser = require('../Models/savingLeagueUserModel');
 
+// ✅ CREATE a new Saving League and add creator to SavingLeagueUsers
 exports.createSavingLeague = async (req, res) => {
+  console.log('⚙️ createSavingLeague controller was called');
   try {
     const {
       name,
@@ -11,20 +13,21 @@ exports.createSavingLeague = async (req, res) => {
       dueDate,
       startDate,
       maxMembers,
-      creatorUid
+      creatorUid,
+      creatorGoal
     } = req.body;
 
     // Validate required fields
-    if (!name || !dueDate || !startDate || !maxMembers || !creatorUid) {
+    if (!name || !dueDate || !startDate || !maxMembers || !creatorUid || !creatorGoal) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Create new Saving League
+    // 1. Create the league
     const newLeague = new SavingLeague({
       _id: new mongoose.Types.ObjectId(),
       name,
       description,
-      status,
+      status: status || 'open',
       dueDate: new Date(dueDate),
       startDate: new Date(startDate),
       maxMembers,
@@ -32,23 +35,41 @@ exports.createSavingLeague = async (req, res) => {
     });
 
     await newLeague.save();
-    res.status(201).json({ message: 'Saving League created successfully', league: newLeague });
+    console.log(`✅ League created: ${newLeague._id}`);
+
+    // 2. Create user entry
+    const newUserEntry = new SavingLeagueUser({
+      svl_id: newLeague._id,
+      user_id: creatorUid,
+      goal: creatorGoal
+    });
+
+    await newUserEntry.save();
+    console.log(`✅ Creator added to SavingLeagueUsers: ${creatorUid}`);
+
+    res.status(201).json({
+      message: 'Saving League created and user added successfully',
+      league: newLeague
+    });
   } catch (error) {
-    console.error('Error creating saving league:', error);
+    console.error('❌ Error in createSavingLeague:', error);
     res.status(500).json({ error: 'Server error while creating saving league' });
   }
 };
 
+// ✅ GET all saving leagues
 exports.getSavingLeagues = async (req, res) => {
   try {
     const leagues = await SavingLeague.find();
     res.status(200).json(leagues);
   } catch (error) {
-    console.error('Error fetching saving leagues:', error);
+    console.error('❌ Error fetching saving leagues:', error);
     res.status(500).json({ error: 'Server error while fetching saving leagues' });
   }
 };
+
 /*
+// ⛔️ OLD (COMMENTED) GET Saving League by UID - keep as is
 exports.getSavingLeagueByUID = async (req, res) => {
   const { uID } = req.params;
 
@@ -64,4 +85,109 @@ exports.getSavingLeagueByUID = async (req, res) => {
           return res.status(404).json({ message: 'Saving League not found' });
       }
   } 
-}*/
+}
+*/
+
+// ✅ GET Saving League by League ID
+exports.getSavingLeagueById = async (req, res) => {
+  const { leagueId } = req.params;
+
+  try {
+    const league = await SavingLeague.findById(leagueId);
+    if (!league) {
+      return res.status(404).json({ error: 'Saving League not found' });
+    }
+
+    res.status(200).json(league);
+  } catch (error) {
+    console.error('Error fetching saving league by ID:', error);
+    res.status(500).json({ error: 'Server error while fetching saving league' });
+  }   
+};
+
+// ✅ JOIN an existing Saving League
+exports.joinSavingLeague = async (req, res) => {
+  const { leagueId } = req.params;
+  const { uid, goal } = req.body;
+
+  if (!uid || !goal) {
+    return res.status(400).json({ error: 'Missing uid or goal' });
+  }
+
+  try {
+    const league = await SavingLeague.findById(leagueId);
+    if (!league) return res.status(404).json({ error: 'League not found' });
+
+    if (league.status !== 'open') {
+      return res.status(403).json({ error: 'League is not open to join' });
+    }
+
+    const currentCount = await SavingLeagueUser.countDocuments({ svl_id: leagueId });
+    if (currentCount >= league.maxMembers) {
+      league.status = 'full';
+      await league.save();
+      return res.status(403).json({ error: 'League is full' });
+    }
+
+    const alreadyJoined = await SavingLeagueUser.findOne({ svl_id: leagueId, user_id: uid });
+    if (alreadyJoined) {
+      return res.status(409).json({ error: 'User already joined this league' });
+    }
+
+    const newEntry = new SavingLeagueUser({
+      svl_id: league._id,
+      user_id: uid,
+      goal
+    });
+
+    await newEntry.save();
+
+    const updatedCount = currentCount + 1;
+    if (updatedCount >= league.maxMembers) {
+      league.status = 'full';
+      await league.save();
+    }
+
+    res.status(201).json({ message: 'Successfully joined the league' });
+  } catch (err) {
+    console.error('❌ Error joining league:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// ✅ GET all open and joinable Saving Leagues
+exports.getOpenSavingLeagues = async (req, res) => {
+  try {
+    const openLeagues = await SavingLeague.find({ status: 'open' });
+
+    const joinableLeagues = [];
+    for (const league of openLeagues) {
+      const count = await SavingLeagueUser.countDocuments({ svl_id: league._id });
+      if (count < league.maxMembers) {
+        joinableLeagues.push(league);
+      }
+    }
+
+    res.status(200).json(joinableLeagues);
+  } catch (error) {
+    console.error('❌ Error fetching open leagues:', error);
+    res.status(500).json({ error: 'Server error while fetching open leagues' });
+  }
+};
+
+// ✅ GET all leagues a user has joined
+exports.getUserLeagues = async (req, res) => {
+  const { uid } = req.params;
+
+  try {
+    const memberships = await SavingLeagueUser.find({ user_id: uid });
+    const leagueIds = memberships.map(m => m.svl_id);
+
+    const userLeagues = await SavingLeague.find({ _id: { $in: leagueIds } });
+
+    res.status(200).json(userLeagues);
+  } catch (error) {
+    console.error('❌ Error fetching user leagues:', error);
+    res.status(500).json({ error: 'Server error fetching user leagues' });
+  }
+};

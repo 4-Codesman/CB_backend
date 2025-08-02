@@ -216,3 +216,25 @@ exports.getUserLeagues = async (req, res) => {
     res.status(500).json({ error: 'Server error fetching user leagues' });
   }
 };
+
+
+// ✅ GET all users in a specific Saving League
+exports.getUsersInSavingLeague = async (req, res) => {
+  const { leagueId } = req.params;
+
+  try {
+    // 1. Validate that the league exists
+    const league = await SavingLeague.findById(leagueId);
+    if (!league) {
+      return res.status(404).json({ error: 'Saving League not found' });
+    }
+
+    // 2. Fetch all users in this league
+    const users = await SavingLeagueUser.find({ svl_id: leagueId });
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('❌ Error fetching users in saving league:', error);
+    res.status(500).json({ error: 'Server error while fetching users in league' });
+  }
+};

@@ -3,10 +3,14 @@ const router = express.Router();
 
 const{
     IncomingTransaction,
-    GetUserTransactions
+    GetUserTransactions,
+    StokvelPayment,
+    StokvelWithdrawal
 } = require('../Controllers/transactionControllers.js');
 
 router.post('/incoming', IncomingTransaction);
 router.get('/:uID', GetUserTransactions);
+router.post('/stokvel-payment', StokvelPayment);
+router.post('/stokvel-withdrawal', StokvelWithdrawal);
 
 module.exports = router;

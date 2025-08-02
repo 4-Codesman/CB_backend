@@ -12,6 +12,8 @@ router.get('/users/:leagueId', savingLeagueController.getUsersInSavingLeague);
 router.post('/:leagueId/join', savingLeagueController.joinSavingLeague);
 router.get('/:leagueId', savingLeagueController.getSavingLeagueById);
 
+router.post('/create', savingLeagueController.createSavingLeague);
+
 //redeploy
 
 

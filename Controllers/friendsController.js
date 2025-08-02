@@ -142,10 +142,12 @@ exports.generateMonthlyPairs = async (req, res) => {
 
   try {
     // ❌ 1. Prevent duplicate monthly pairings
+    /*
     const alreadyExists = await MonthlyPair.findOne({ month: currentMonth });
     if (alreadyExists) {
       return res.status(400).json({ message: `Pairs for ${currentMonth} already exist.` });
     }
+      */
 
     // ✅ 2. Load all users
     const allUsers = await User.find();

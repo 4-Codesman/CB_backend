@@ -6,10 +6,13 @@ const savingLeagueController = require('../Controllers/savingLeagueController');
 // ✅ Specific first
 router.get('/open', savingLeagueController.getOpenSavingLeagues);
 router.get('/uID/:uID', savingLeagueController.getUserLeagues);
+router.get('/users/:leagueId', savingLeagueController.getUsersInSavingLeague);
 
 // ✅ Generic after
 router.post('/:leagueId/join', savingLeagueController.joinSavingLeague);
 router.get('/:leagueId', savingLeagueController.getSavingLeagueById);
+
+
 
 /*
 router.get('/:leagueId', savingLeagueController.getSavingLeagueById);

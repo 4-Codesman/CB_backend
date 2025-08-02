@@ -220,21 +220,28 @@ exports.getUserLeagues = async (req, res) => {
 
 // ✅ GET all users in a specific Saving League
 exports.getUsersInSavingLeague = async (req, res) => {
-  const { leagueId } = req.params;
+  const { leagueId } = req.params;  // Changed from _id to leagueId to match route parameter
+  console.log('🔍 Searching for league with ID:', leagueId);
 
   try {
     // 1. Validate that the league exists
     const league = await SavingLeague.findById(leagueId);
+    console.log('📋 Found league:', league);
+
     if (!league) {
       return res.status(404).json({ error: 'Saving League not found' });
     }
 
     // 2. Fetch all users in this league
-    const users = await SavingLeagueUser.find({ svl_id: leagueId });
+    const users = await SavingLeagueUser.find({ svl_id: leagueId }); // Changed _id to svl_id
+    console.log('👥 Found users:', users);
 
     res.status(200).json(users);
   } catch (error) {
     console.error('❌ Error fetching users in saving league:', error);
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid league ID format' });
+    }
     res.status(500).json({ error: 'Server error while fetching users in league' });
   }
 };

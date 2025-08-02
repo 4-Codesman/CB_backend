@@ -177,13 +177,24 @@ exports.getOpenSavingLeagues = async (req, res) => {
 
 // ✅ GET all leagues a user has joined
 exports.getUserLeagues = async (req, res) => {
-  const { uid } = req.params;
+  const { uID } = req.params;
+  console.log('🔍 Searching for user:', uID);
 
   try {
-    const memberships = await SavingLeagueUser.find({ user_id: uid });
-    const leagueIds = memberships.map(m => m.svl_id);
+    // Fetch memberships for the user
+    const memberships = await SavingLeagueUser.find({ user_id: uID });
+    console.log('📋 Found memberships:', memberships);
 
+    if (memberships.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const leagueIds = memberships.map(m => m.svl_id); // No need to convert since it's already ObjectId
+    console.log('🏷️ League IDs:', leagueIds);
+
+    // Fetch leagues using the IDs
     const userLeagues = await SavingLeague.find({ _id: { $in: leagueIds } });
+    console.log('🎯 Found leagues:', userLeagues);
 
     res.status(200).json(userLeagues);
   } catch (error) {

@@ -77,7 +77,8 @@ exports.getFriendsList = async (req, res) => {
     const friends = await User.find({ userID: { $in: user.friends } });
     res.status(200).json(friends.map(f => ({
       uid: f.userID,
-      name: f.userName
+      name: f.userName,
+      personalGoalProgress: f.personalGoalProgress || 0
     })));
   } catch (error) {
     res.status(500).json({ message: error.message });

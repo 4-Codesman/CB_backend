@@ -157,7 +157,17 @@ exports.joinSavingLeague = async (req, res) => {
       await league.save();
     }
 
-    res.status(201).json({ message: 'Successfully joined the league' });
+    // ✅ Award +10 points to user who joined
+    const user = await User.findById(uid);
+    if (user) {
+      user.accPoints = (user.accPoints || 0) + 10;
+      await user.save();
+      console.log(`🏆 +10 points awarded to user ${uid} for joining league.`);
+    } else {
+      console.warn(`⚠️ User with ID ${uid} not found when awarding points.`);
+    }
+
+    res.status(201).json({ message: 'Successfully joined the league and earned 10 points!' });
   } catch (err) {
     console.error('❌ Error joining league:', err);
     res.status(500).json({ error: 'Internal server error' });

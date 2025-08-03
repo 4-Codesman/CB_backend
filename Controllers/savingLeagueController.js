@@ -37,6 +37,15 @@ exports.createSavingLeague = async (req, res) => {
     await newLeague.save();
     console.log(`✅ League created: ${newLeague._id}`);
 
+    const user = await User.findById(creatorUid);
+    if (!user) {
+      console.error(`❌ User with ID ${creatorUid} not found`);
+      return res.status(404).json({ error: 'Creator user not found' });    
+    }else{
+      user.accPoints += 10; // Add 10 points for creating a league
+      await user.save();
+    }
+
     // 2. Create user entry
     const newUserEntry = new SavingLeagueUser({
       svl_id: newLeague._id,

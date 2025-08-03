@@ -37,14 +37,7 @@ exports.createSavingLeague = async (req, res) => {
     await newLeague.save();
     console.log(`✅ League created: ${newLeague._id}`);
 
-    const user = await User.findById(creatorUid);
-    if (!user) {
-      console.error(`❌ User with ID ${creatorUid} not found`);
-      return res.status(404).json({ error: 'Creator user not found' });    
-    }else{
-      user.accPoints += 10; // Add 10 points for creating a league
-      await user.save();
-    }
+    
 
     // 2. Create user entry
     const newUserEntry = new SavingLeagueUser({
@@ -157,16 +150,7 @@ exports.joinSavingLeague = async (req, res) => {
       await league.save();
     }
 
-    // ✅ Award +10 points to user who joined
-    const user = await User.findById(uid);
-    if (user) {
-      user.accPoints = (user.accPoints || 0) + 10;
-      await user.save();
-      console.log(`🏆 +10 points awarded to user ${uid} for joining league.`);
-    } else {
-      console.warn(`⚠️ User with ID ${uid} not found when awarding points.`);
-    }
-
+ 
     res.status(201).json({ message: 'Successfully joined the league and earned 10 points!' });
   } catch (err) {
     console.error('❌ Error joining league:', err);
